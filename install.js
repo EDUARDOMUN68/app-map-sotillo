@@ -20,8 +20,22 @@
     });
   });
   if('serviceWorker' in navigator){
-    window.addEventListener('load',()=>{
-      navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(error=>console.warn('No se pudo preparar la instalación sin conexión',error));
+    let reloading=false;
+    const hadController=Boolean(navigator.serviceWorker.controller);
+    navigator.serviceWorker.addEventListener('controllerchange',()=>{
+      if(hadController&&!reloading){reloading=true;window.location.reload()}
     });
+    let registration;
+    const check=async()=>{
+      try{
+        registration=registration||await navigator.serviceWorker.register('./sw.js',{scope:'./',updateViaCache:'none'});
+        if(registration.waiting)registration.waiting.postMessage({type:'ACTIVATE_UPDATE'});
+        await registration.update();
+      }catch(error){console.warn('No se pudo comprobar la actualización',error)}
+    };
+    window.addEventListener('load',()=>{
+      check();
+    });
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)check()});
   }
 })();
