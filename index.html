@@ -123,13 +123,13 @@
 <p id="weather-message" class="weather-message" role="status">Cargando la previsión…</p>
 <div id="weather-now" class="weather-now" aria-live="polite"><p>Consultando temperatura, humedad y viento…</p></div>
 <p id="weather-status" class="weather-status"></p><p id="weather-summary" class="weather-summary"></p>
-<h2>Hora por hora · próximas 72 horas</h2><p class="weather-note">La humedad es relativa, en %. Lluvia en milímetros acumulados durante la hora. Datos previstos, no mediciones de una estación.</p>
-<div class="weather-table-wrap" tabindex="0" role="region" aria-label="Previsión por horas, desliza para ver todas las columnas"><table><thead><tr><th scope="col">Día y hora</th><th scope="col">Cielo</th><th scope="col">Temperatura</th><th scope="col">Sensación</th><th scope="col">Humedad</th><th scope="col">Lluvia</th><th scope="col">Nubes</th><th scope="col">Viento / rachas</th></tr></thead><tbody id="weather-hours"></tbody></table></div>
 <h2>Los próximos 15 días</h2><p class="weather-note">Máxima y mínima diarias; humedad media de las horas del día. A partir de la segunda semana, interpreta los datos como tendencia y consulta de nuevo al acercarse la fecha.</p><div id="weather-days" class="weather-days"></div>
+<h2>Hora por hora · próximas 36 horas</h2><p class="weather-note">La humedad es relativa, en %. Lluvia en milímetros acumulados durante la hora. Datos previstos, no mediciones de una estación.</p>
+<div class="weather-table-wrap" tabindex="0" role="region" aria-label="Previsión por horas, desliza para ver todas las columnas"><table><thead><tr><th scope="col">Día y hora</th><th scope="col">Cielo</th><th scope="col">Temperatura</th><th scope="col">Sensación</th><th scope="col">Humedad</th><th scope="col">Lluvia</th><th scope="col">Nubes</th><th scope="col">Viento / rachas</th></tr></thead><tbody id="weather-hours"></tbody></table></div>
 <h2>Cómo se mueve el tiempo</h2><div class="weather-layer-buttons"><button data-weather-layer="clouds" aria-pressed="true">☁ Nubes</button><button data-weather-layer="rain" aria-pressed="false">🌧 Lluvia</button><button data-weather-layer="wind" aria-pressed="false">↗ Viento</button></div>
 <iframe id="weather-map" class="weather-map" title="Mapa meteorológico Windy centrado en Sotillo" loading="lazy" src="https://embed.windy.com/embed.html?type=map&amp;location=coordinates&amp;lat=40.2912&amp;lon=-4.58385&amp;zoom=8&amp;overlay=clouds&amp;product=ecmwf&amp;level=surface&amp;metricTemp=%C2%B0C&amp;metricWind=km%2Fh&amp;metricRain=mm" allowfullscreen></iframe>
 <p class="weather-note">Mapa de previsión, no imagen de satélite observada. Usa la barra temporal del mapa para avanzar. <a href="https://www.windy.com/40.291/-4.584?clouds,40.291,-4.584,8" target="_blank" rel="noopener">Abrir Windy en pantalla completa ↗</a></p>
-<footer class="weather-footer">Datos: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> y <a href="https://www.ecmwf.int/" target="_blank" rel="noopener">ECMWF</a> · CC BY 4.0. Mapas: Windy y sus proveedores.<br>La app consulta novedades cada hora mientras está abierta y al volver a ella. El modelo se renueva aproximadamente cada seis horas. Si falla la conexión, conserva la última previsión y avisa.<br>Para instalar: abre el enlace publicado en el navegador del móvil y elige «Instalar aplicación» o «Añadir a pantalla de inicio». Versión 0.1.0.</footer>
+<footer class="weather-footer">Datos: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> y <a href="https://www.ecmwf.int/" target="_blank" rel="noopener">ECMWF</a> · CC BY 4.0. Mapas: Windy y sus proveedores.<br>La app consulta novedades cada hora mientras está abierta y al volver a ella. El modelo se renueva aproximadamente cada seis horas. Si falla la conexión, conserva la última previsión y avisa.<br>Para instalar: abre el enlace publicado en el navegador del móvil y elige «Instalar aplicación» o «Añadir a pantalla de inicio». Versión 0.1.1.</footer>
 </div></section><div class="app" id="atlas-page" hidden>
   <aside id="sidebar" class="sidebar collapsed">
     <header class="side-head">
@@ -453,4 +453,5 @@
 </script>
 <script src="weather.js" defer></script></body>
 </html>
+
 

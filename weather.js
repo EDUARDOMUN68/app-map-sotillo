@@ -20,7 +20,7 @@
   }
   function render(record){
     const all=rows(record.data), now=Date.now()/1000;
-    const next=all.filter(r=>r.time>=Math.floor(now/3600)*3600).slice(0,72);
+    const next=all.filter(r=>r.time>=Math.floor(now/3600)*3600).slice(0,36);
     const r=next[0];
     if(!r)throw Error('La previsión guardada ha caducado');
     $('weather-now').innerHTML=`<div><span class="weather-kicker">Previsión para ${fmt(r.time,{weekday:'long',hour:'2-digit',minute:'2-digit'})}</span><h2>${icon(r.weather_code)} ${n(r.temperature_2m,' °C')}</h2><p>${describe(r.weather_code)} · Sensación ${n(r.apparent_temperature,' °C')}</p></div><div class="weather-metrics"><p><strong>${n(r.relative_humidity_2m,' %')}</strong><span>Humedad relativa</span></p><p><strong>${n(r.wind_speed_10m,' km/h')}</strong><span>Viento · rachas ${n(r.wind_gusts_10m,' km/h')}</span></p><p><strong>${n(r.precipitation,' mm',1)}</strong><span>Precipitación en la hora</span></p></div>`;
@@ -72,3 +72,4 @@
   refresh();
   if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 })();
+
