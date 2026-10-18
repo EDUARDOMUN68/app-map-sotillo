@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f2f6f1">
+  <meta name="description" content="Mapa interactivo de la provincia de Ávila: municipios, relieve, sierras y cumbres destacadas.">
+  <title>APP MAP.SOTILLO · Mapa y tiempo</title>
+  <link rel="preconnect" href="https://server.arcgisonline.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    :root {--bg:#10211f;--surface:#172d29;--surface2:#1c3731;--line:rgba(205,232,218,.14);--white:#f1f5ed;--muted:#a8beb1;--mint:#a6dfc7;--lime:#d2ebb1;--coral:#ffd2a8;--accent:#e8aa79;--shadow:0 14px 42px rgba(0,0,0,.28)}
+    *{box-sizing:border-box}
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--white);background:var(--bg)}
+    html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+    button,input{font:inherit}button{cursor:pointer}
+    .app{display:grid;grid-template-columns:348px minmax(0,1fr);height:100vh;height:100dvh}
+    .sidebar{z-index:600;display:flex;flex-direction:column;min-height:0;overflow:hidden;background:linear-gradient(167deg,#192e29,#0e1c1c 72%);border-right:1px solid var(--line);box-shadow:5px 0 32px rgba(12,29,27,.15)}
+    .side-head{padding:25px 24px 18px;flex-shrink:0;border-bottom:1px solid var(--line)}
+    .eyebrow{display:flex;align-items:center;gap:9px;text-transform:uppercase;font-size:10px;letter-spacing:.24em;font-weight:800;color:var(--mint)}
+    .mark{width:19px;height:19px;display:inline-grid;place-items:center;border:1px solid rgba(173,236,210,.7);transform:rotate(-45deg);border-radius:3px}
+    .mark b{font-size:10px;transform:rotate(45deg)}
+    h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;letter-spacing:-.015em;font-size:46px;line-height:1.05;margin:15px 0 7px}
+    h1 em{font-size:26px;display:block;letter-spacing:0;color:#c8e4d0;font-weight:400;font-style:italic;margin-top:6px}
+    .subtitle{font-size:12.5px;color:var(--muted);line-height:1.6;margin:11px 0 0}
+    .statusbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:15px 0 0}
+    .status{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px;line-height:1.35}
+    .status i{display:block;flex:0 0 auto;width:7px;height:7px;border-radius:50%;background:#edb87d;box-shadow:0 0 0 4px rgba(237,184,125,.11)}
+    .status.ok i{background:#a7e8bb;box-shadow:0 0 0 4px rgba(167,232,187,.12)}
+    .count{color:#e6efd9;font-weight:700;font-variant-numeric:tabular-nums;font-size:11px}
+    .side-scroll{overflow-y:auto;overscroll-behavior:contain;min-height:0;flex:1;scrollbar-width:thin;scrollbar-color:#517063 transparent}
+    .section{padding:21px 24px;border-bottom:1px solid var(--line)}
+    .section-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 13px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.13em;color:#dcebdd}
+    .mini{font-size:10px;font-weight:500;letter-spacing:0;color:#92ab9d;text-transform:none}
+    .searchbox{display:flex;gap:9px;align-items:center;background:rgba(229,255,237,.065);border:1px solid rgba(210,237,221,.19);border-radius:13px;padding:11px 13px;transition:border-color .18s}
+    .searchbox:focus-within{border-color:rgba(183,234,205,.7);background:rgba(229,255,237,.09)}
+    .searchbox svg{width:17px;height:17px;stroke:var(--mint);flex:0 0 auto}
+    .searchbox input{min-width:0;width:100%;background:transparent;border:0;outline:none;font-size:13px;color:white}
+    .searchbox input::placeholder{color:#9aad9f}
+    .shortcuts{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+    .chip{color:#d0e8d6;background:transparent;border:1px solid rgba(179,213,190,.23);border-radius:16px;font-size:11px;padding:5px 10px;white-space:nowrap;transition:.18s}
+    .chip:hover,.chip:focus-visible{background:#365446;border-color:#83b9a1}
+    .switch-list{display:grid;gap:11px}
+    .switch-row{display:flex;align-items:center;justify-content:space-between;gap:15px;font-size:12px;color:#dce6df;cursor:pointer}
+    .switch-row small{display:block;font-size:10px;color:#90ab9b;margin-top:2px;line-height:1.4}
+    .switch-row input{appearance:none;flex:0 0 auto;width:35px;height:21px;border-radius:14px;background:#495a53;position:relative;outline:none;border:1px solid rgba(255,255,255,.14);cursor:pointer}
+    .switch-row input:after{content:"";position:absolute;width:15px;height:15px;border-radius:50%;background:#f0ede7;left:2px;top:2px;transition:transform .2s}
+    .switch-row input:checked{background:#73aa8f}.switch-row input:checked:after{transform:translateX(14px)}
+    .tab-switch{display:grid;grid-template-columns:1fr 1fr;background:rgba(0,0,0,.21);padding:4px;border-radius:11px;gap:3px;margin-bottom:14px}
+    .tab-switch button{color:#adc6b7;border:0;background:transparent;padding:9px 6px;border-radius:8px;font-weight:700;font-size:11px}
+    .tab-switch button.active{color:#152920;background:#bddfc9;box-shadow:0 3px 11px rgba(0,0,0,.1)}
+    .entries{min-height:175px;max-height:320px;overflow-y:auto;padding-right:2px;scrollbar-width:thin;scrollbar-color:#517063 transparent}
+    .entry{display:flex;align-items:center;gap:11px;width:100%;padding:11px 3px;background:transparent;border:0;border-bottom:1px solid rgba(219,239,222,.095);text-align:left;color:#f0f4ed;transition:background .15s}
+    .entry:hover,.entry:focus-visible{background:rgba(184,219,192,.08)}
+    .entry-dot{flex:0 0 auto;width:8px;height:8px;background:#91d9bd;border:2px solid #204c40;border-radius:50%;box-shadow:0 0 0 2px rgba(169,226,190,.2)}
+    .entry-dot.peak{background:var(--accent);border-color:#7e3e28;border-radius:2px;transform:rotate(45deg)}
+    .entry-name{font-size:12px;font-weight:600;line-height:1.28}.entry-meta{font-size:10px;color:var(--muted);margin-top:2px}
+    .entry-right{margin-left:auto;color:#86aa98;font-size:13px}
+    .empty-list{font-size:12px;line-height:1.6;color:var(--muted);padding:14px 2px}
+    .note{padding:15px 24px 19px;flex-shrink:0;font-size:10px;line-height:1.5;color:#8da89a;border-top:1px solid var(--line);background:rgba(0,0,0,.11)}
+    .note a{color:#accfb9;text-underline-offset:3px}
+    .map-panel{position:relative;min-width:0;min-height:0;background:#dce7db}
+    #map{position:absolute;inset:0;z-index:1;background:#d8e0d2}
+    .map-top{position:absolute;z-index:500;top:24px;left:24px;right:78px;display:flex;gap:10px;justify-content:space-between;align-items:flex-start;pointer-events:none}
+    .view-picker,.map-titlecard{pointer-events:auto;box-shadow:var(--shadow)}
+    .map-titlecard{border:1px solid rgba(255,255,255,.55);background:rgba(248,250,244,.94);color:#203d34;border-radius:14px;padding:12px 15px;backdrop-filter:blur(9px);max-width:290px}
+    .map-titlecard strong{font:600 16px Georgia,serif}.map-titlecard div{margin-top:4px;color:#667c70;font-size:11px;line-height:1.25}
+    .view-picker{display:flex;gap:3px;border:1px solid rgba(255,255,255,.5);background:rgba(250,252,247,.93);padding:5px;border-radius:12px;backdrop-filter:blur(9px)}
+    .view-picker button{border:0;border-radius:8px;padding:9px 13px;font-size:12px;font-weight:800;color:#647e70;background:transparent;transition:.2s}
+    .view-picker button.active{background:#284e3d;color:white}
+    .map-bottom{position:absolute;left:24px;bottom:31px;z-index:500;display:flex;align-items:flex-end;gap:9px;pointer-events:none}
+    .legend{pointer-events:auto;padding:13px 16px;border-radius:13px;color:#25453b;background:rgba(251,252,248,.95);box-shadow:var(--shadow);border:1px solid #fff;font-size:12px;line-height:1.9}
+    .legend strong{font-size:11px;display:block;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+    .legend-item{display:flex;gap:10px;align-items:center}
+    .legend-line{width:17px;height:0;border-top:3px solid #f2a873}
+    .legend-ring{width:14px;height:14px;border:2px solid #189071;border-radius:50%}
+    .legend-peak{font-size:14px;color:#a9693f;line-height:1}
+    .legend-dot{background:#238d75;width:7px;height:7px;border-radius:50%;margin:0 3px}
+    .map-action{pointer-events:auto;color:#25453b;background:#fbfcf7;border:1px solid #fff;border-radius:12px;box-shadow:var(--shadow);padding:13px;display:flex;gap:7px;align-items:center;font-weight:800;font-size:12px}
+    .map-action:hover{background:#e6f1e7}
+    .mountain-label{pointer-events:auto!important;background:#643f33e8;border:1px solid #efba96;color:#fff3e0;padding:7px 10px;border-radius:9px;box-shadow:0 4px 16px rgba(58,33,25,.23);font-weight:750;font-size:13px;letter-spacing:0;line-height:1.25;white-space:nowrap}
+    .mountain-label:before{content:'▲';font-size:9px;margin-right:5px;color:#ffd19f}
+    .mountain-label span{font-size:12px;color:#f2ceae;font-weight:500}
+    .peak-pin{width:24px;height:24px;display:flex;align-items:center;justify-content:center;color:#fff6e9;text-shadow:0 2px 4px #5c2c23;font-size:23px;filter:drop-shadow(0 2px 4px rgba(66,27,17,.7));transition:transform .2s}
+    .peak-pin:hover{transform:scale(1.2)}
+    .leaflet-control-zoom{border:0!important;box-shadow:var(--shadow)!important;border-radius:12px!important;overflow:hidden}
+    .leaflet-control-zoom a{color:#2e5d4c!important;border-color:#e4ede5!important}
+    .leaflet-control-scale-line{color:#31483e!important;background:rgba(255,255,255,.75)!important}
+    .leaflet-popup-content-wrapper{border-radius:13px;box-shadow:0 10px 40px #142d293d}.leaflet-popup-content{font:13px/1.6 system-ui,sans-serif;margin:15px 18px;color:#244439}
+    .leaflet-popup-content strong{font-size:15px;color:#163b2c}
+    .leaflet-popup-content .pop-kind{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#987251}
+    .leaflet-popup-content .pop-more{display:block;color:#5c786b;margin-top:6px}
+    .leaflet-popup-content a{color:#167758;font-weight:700}
+    .leaflet-tooltip.town-tooltip{background:#fffef5;color:#23483a;font-size:13px;font-weight:750;border:1px solid rgba(51,95,68,.24);box-shadow:0 3px 9px #0002;padding:4px 6px}
+    .leaflet-tooltip.town-tooltip:before{display:none}
+    .leaflet-tooltip-left.town-tooltip,.leaflet-tooltip-right.town-tooltip{border:1px solid rgba(51,95,68,.24)}
+    /* Etiquetas HTML nítidas: visibles encima de las imágenes de satélite.
+       No forman parte de los mosaicos rasterizados y no se deforman al ampliar. */
+    .sat-town-label{background:transparent!important;border:0!important;box-shadow:none!important;pointer-events:none!important;width:max-content!important;height:auto!important}
+    .sat-town-label span{display:inline-block;white-space:nowrap;padding:4px 7px;border-radius:6px;background:rgba(12,34,31,.83);border:1px solid rgba(234,252,238,.45);color:#fff;font:700 12px/1.15 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:0;text-shadow:0 1px 3px #09231d,0 1px 2px #09231d;box-shadow:0 2px 5px rgba(0,0,0,.22)}
+    .sat-town-label.major span{background:rgba(10,57,43,.94);border-color:#c3f1d4;font-weight:800}
+    @media(max-width:640px){.sat-town-label span{font-size:11px;padding:3px 5px}}
+    .mobile-toggle{display:none}
+    @media(max-width:900px){.app{grid-template-columns:290px minmax(0,1fr)}.side-head{padding:20px 17px 16px}.section{padding:18px 17px}.note{padding:13px 17px}h1{font-size:41px}.map-top{left:14px;top:14px;right:63px}.map-titlecard{display:none}.map-bottom{left:12px;bottom:26px}.legend{padding:9px 12px}}
+    @media(max-width:640px){
+      .app{display:block}.sidebar{position:absolute;top:0;left:0;right:0;height:auto;max-height:55dvh;z-index:1001;border:0;border-radius:0 0 17px 17px;box-shadow:0 7px 26px #091d1d66;transition:max-height .22s ease}
+      .sidebar.collapsed{max-height:106px}.side-head{padding:10px 116px 12px 17px;position:relative}.eyebrow{font-size:9px;letter-spacing:.16em}.mark{width:15px;height:15px}.mark b{font-size:8px}
+      h1{font-size:27px;margin:5px 0 0;display:block;line-height:1.02;letter-spacing:0}h1 em{font-size:14px;margin:3px 0 0;display:block;line-height:1.15;letter-spacing:0}.subtitle,.statusbar{display:none}
+      .mobile-toggle{display:block;position:absolute;right:14px;top:27px;background:#315144;border:1px solid #587365;border-radius:8px;color:#e0f2e1;padding:8px 12px;font-size:11px;font-weight:700}
+      .side-scroll{min-height:100px}.note{display:none}
+      .map-panel{position:absolute;inset:0}.map-top{top:117px;left:10px;right:58px;justify-content:flex-start}.view-picker{padding:3px;gap:2px}.view-picker button{font-size:12px;padding:10px 11px}
+      .map-bottom{left:10px;bottom:24px;right:10px;gap:7px}.legend{font-size:11px;padding:9px 11px;line-height:1.6}.legend strong{font-size:11px}.map-action{font-size:11px;padding:10px;gap:4px}
+      .leaflet-top.leaflet-right{top:111px}.leaflet-control-zoom a{width:31px!important;height:31px!important;line-height:30px!important}
+      .mountain-label{font-size:12px;padding:7px 9px}.mountain-label span{font-size:11px}
+    }
+  </style>
+<link rel="stylesheet" href="weather.css"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg"></head>
+<body>
+<nav class="app-nav" aria-label="Secciones"><strong>APP MAP.SOTILLO <small>· Ávila y su entorno</small></strong><button data-page="weather" aria-pressed="true">El tiempo</button><button data-page="atlas" aria-pressed="false">Mapa de Ávila</button></nav>
+<section id="weather-page" class="weather-page" aria-label="El tiempo en Sotillo de la Adrada"><div class="weather-wrap">
+<header class="weather-heading"><div><span class="weather-kicker">TU TIEMPO · VALLE DEL TIÉTAR</span><h1>Sotillo de la Adrada</h1><p>Previsión local · ECMWF, modelo europeo</p></div><button id="weather-refresh">Actualizar</button></header>
+<p id="weather-message" class="weather-message" role="status">Cargando la previsión…</p>
+<div id="weather-now" class="weather-now" aria-live="polite"><p>Consultando temperatura, humedad y viento…</p></div>
+<p id="weather-status" class="weather-status"></p><p id="weather-summary" class="weather-summary"></p>
+<h2>Hora por hora · próximas 72 horas</h2><p class="weather-note">La humedad es relativa, en %. Lluvia en milímetros acumulados durante la hora. Datos previstos, no mediciones de una estación.</p>
+<div class="weather-table-wrap" tabindex="0" role="region" aria-label="Previsión por horas, desliza para ver todas las columnas"><table><thead><tr><th scope="col">Día y hora</th><th scope="col">Cielo</th><th scope="col">Temperatura</th><th scope="col">Sensación</th><th scope="col">Humedad</th><th scope="col">Lluvia</th><th scope="col">Nubes</th><th scope="col">Viento / rachas</th></tr></thead><tbody id="weather-hours"></tbody></table></div>
+<h2>Los próximos 15 días</h2><p class="weather-note">Máxima y mínima diarias; humedad media de las horas del día. A partir de la segunda semana, interpreta los datos como tendencia y consulta de nuevo al acercarse la fecha.</p><div id="weather-days" class="weather-days"></div>
+<h2>Cómo se mueve el tiempo</h2><div class="weather-layer-buttons"><button data-weather-layer="clouds" aria-pressed="true">☁ Nubes</button><button data-weather-layer="rain" aria-pressed="false">🌧 Lluvia</button><button data-weather-layer="wind" aria-pressed="false">↗ Viento</button></div>
+<iframe id="weather-map" class="weather-map" title="Mapa meteorológico Windy centrado en Sotillo" loading="lazy" src="https://embed.windy.com/embed.html?type=map&amp;location=coordinates&amp;lat=40.2912&amp;lon=-4.58385&amp;zoom=8&amp;overlay=clouds&amp;product=ecmwf&amp;level=surface&amp;metricTemp=%C2%B0C&amp;metricWind=km%2Fh&amp;metricRain=mm" allowfullscreen></iframe>
+<p class="weather-note">Mapa de previsión, no imagen de satélite observada. Usa la barra temporal del mapa para avanzar. <a href="https://www.windy.com/40.291/-4.584?clouds,40.291,-4.584,8" target="_blank" rel="noopener">Abrir Windy en pantalla completa ↗</a></p>
+<footer class="weather-footer">Datos: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> y <a href="https://www.ecmwf.int/" target="_blank" rel="noopener">ECMWF</a> · CC BY 4.0. Mapas: Windy y sus proveedores.<br>La app consulta novedades cada hora mientras está abierta y al volver a ella. El modelo se renueva aproximadamente cada seis horas. Si falla la conexión, conserva la última previsión y avisa.<br>Para instalar: abre el enlace publicado en el navegador del móvil y elige «Instalar aplicación» o «Añadir a pantalla de inicio». Versión 0.1.0.</footer>
+</div></section><div class="app" id="atlas-page" hidden>
+  <aside id="sidebar" class="sidebar collapsed">
+    <header class="side-head">
+      <div class="eyebrow"><span class="mark"><b>✦</b></span> Atlas interactivo · Castilla y León</div>
+      <h1>Ávila <em>pueblos y montañas</em></h1>
+      <p class="subtitle">Explora la provincia, sus municipios, la Sierra de Gredos y los grandes relieves del Sistema Central.</p>
+      <div class="statusbar"><span id="dataStatus" class="status"><i></i><span>Cargando información geográfica…</span></span><span id="townCount" class="count">— municipios</span></div>
+      <button class="mobile-toggle" id="mobileToggle" type="button" aria-expanded="false" aria-controls="sideScroll">Explorar ↓</button>
+    </header>
+    <div id="sideScroll" class="side-scroll">
+      <section class="section">
+        <h2 class="section-title">Buscar un pueblo <span class="mini">Nombre del municipio</span></h2>
+        <label class="searchbox" aria-label="Buscar municipios de Ávila">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.7"></circle><path d="m16 16 5 5"></path></svg>
+          <input id="townSearch" type="search" placeholder="Ej. Sotillo de la Adrada" autocomplete="off">
+        </label>
+        <div class="shortcuts"><button type="button" class="chip" data-shortcut="Ávila">Ávila capital</button><button type="button" class="chip" data-shortcut="Arévalo">Arévalo</button><button type="button" class="chip" data-shortcut="Sotillo de la Adrada">Sotillo de la Adrada</button></div>
+      </section>
+      <section class="section">
+        <h2 class="section-title">Qué quieres ver</h2>
+        <div class="switch-list">
+          <label class="switch-row"><span>Pueblos y municipios<small>Puntos con información; nombres visibles en satélite</small></span><input id="toggleTowns" type="checkbox" checked></label>
+          <label class="switch-row"><span>Sierras y cumbres<small>Marcadores en puntos geográficos contrastados</small></span><input id="togglePeaks" type="checkbox" checked></label>
+          <label class="switch-row"><span>Límites municipales<small>Contorno de cada término municipal</small></span><input id="toggleMunicipal" type="checkbox"></label>
+        </div>
+      </section>
+      <section class="section">
+        <div class="tab-switch" role="tablist" aria-label="Explorar elementos">
+          <button type="button" class="active" id="tabTowns" role="tab" aria-selected="true">Pueblos</button>
+          <button type="button" id="tabPeaks" role="tab" aria-selected="false">Montañas</button>
+        </div>
+        <h2 class="section-title"><span id="listTitle">Todos los municipios</span><span id="listCount" class="mini">Cargando…</span></h2>
+        <div id="entries" class="entries" aria-live="polite"><div class="empty-list">Consultando el registro de municipios…</div></div>
+      </section>
+    </div>
+    <footer class="note">Municipios: <a href="https://analisis.datosabiertos.jcyl.es/explore/dataset/registro-de-municipios-de-castilla-y-leon/" target="_blank" rel="noopener">Junta de Castilla y León</a>. Límites: datos del <a href="https://www.ign.es/" target="_blank" rel="noopener">IGN</a>, mediante es-atlas. Topografía y fotografías: proveedores indicados en el mapa. Se necesita conexión a Internet.</footer>
+  </aside>
+  <main class="map-panel" aria-label="Mapa interactivo de la provincia de Ávila">
+    <div id="map"></div>
+    <div class="map-top">
+      <div class="map-titlecard"><strong>Provincia de Ávila</strong><div>Castilla y León, España · Sistema Central</div></div>
+      <div class="view-picker" role="group" aria-label="Cambiar vista del mapa">
+        <button type="button" data-base="topo" class="active">Relieve</button>
+        <button type="button" data-base="osm">Calles</button>
+        <button type="button" data-base="sat">Satélite</button>
+      </div>
+    </div>
+    <div class="map-bottom">
+      <div class="legend"><strong>Leyenda</strong><div class="legend-item"><span class="legend-line"></span> Límite provincial</div><div class="legend-item"><span class="legend-dot"></span> Municipio</div><div class="legend-item"><span class="legend-peak">▲</span> Cumbre destacada</div></div>
+      <button id="resetView" type="button" class="map-action" title="Ver toda la provincia">⤢ <span>Ver toda Ávila</span></button>
+    </div>
+  </main>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+<script>
+'use strict';
+(() => {
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const norm = s => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('es').trim();
+  const safeCoords = d => Number.isFinite(Number(d.lat)) && Number.isFinite(Number(d.lon));
+  const Lmap = L.map('map', {zoomControl:false,preferCanvas:true,zoomSnap:1,zoomDelta:1,minZoom:6,maxZoom:17}).setView([40.60,-4.99],8);
+  L.control.zoom({position:'topright'}).addTo(Lmap);
+  L.control.scale({imperial:false,position:'bottomright'}).addTo(Lmap);
+
+  const attributions = {
+    arc:'Mapas © Esri, USGS y colaboradores',
+    osm:'© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'
+  };
+  const tiles = {
+    topo:L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',{attribution:attributions.arc,maxZoom:17}),
+    osm:L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:attributions.osm,maxZoom:19}),
+    sat:L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{attribution:attributions.arc,maxZoom:18})
+  };
+  const shade = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}',{attribution:attributions.arc,opacity:0.18,maxZoom:13});
+  let activeBase='topo';
+  tiles.topo.addTo(Lmap);
+  const townsLayer=L.layerGroup().addTo(Lmap);
+  // Capa independiente para nombres de pueblos. Al tratarse de texto HTML,
+  // resulta legible sobre las fotografías y no se estira con el mosaico.
+  Lmap.createPane('satTownLabels');
+  const satPane=Lmap.getPane('satTownLabels');
+  satPane.style.zIndex='640';
+  satPane.style.pointerEvents='none';
+  const satTownLabels=L.layerGroup();
+  const peaksLayer=L.layerGroup().addTo(Lmap);
+  const municipalityLayer=L.layerGroup();
+  const borderLayer=L.layerGroup().addTo(Lmap);
+  let provinceBounds=L.latLngBounds([40.03,-5.85],[41.25,-3.82]);
+  let towns=[], muniFeatures=[], selectedTab='towns';
+  const markers=new Map();
+
+  // A cualquier escala se rotulan primero las poblaciones más importantes.
+  // A medida que el usuario acerca el mapa caben los municipios más pequeños.
+  // Calculamos colisiones en píxeles para que los nombres no se superpongan.
+  function drawSatelliteTownLabels(){
+    satTownLabels.clearLayers();
+    if(activeBase!=='sat'||!$('toggleTowns').checked||!towns.length)return;
+    const bounds=Lmap.getBounds().pad(.05);
+    const viewport=Lmap.getSize();
+    const zoom=Lmap.getZoom();
+    const isMobile=window.innerWidth<=640;
+    const fontSize=isMobile?11:12;
+    const placed=[];
+    const inView=towns.filter(t=>bounds.contains([t.lat,t.lon]));
+    inView.sort((a,b)=>{
+      // Orden de prioridad estable: Ávila capital, población y nombre.
+      const ap=norm(a.name)==='avila'?1000000:(Number.isFinite(a.pop)?a.pop:0);
+      const bp=norm(b.name)==='avila'?1000000:(Number.isFinite(b.pop)?b.pop:0);
+      return bp-ap||a.name.localeCompare(b.name,'es');
+    });
+    for(const t of inView){
+      const p=Lmap.latLngToContainerPoint([t.lat,t.lon]);
+      const w=Math.min(245,Math.ceil([...t.name].length*fontSize*.61)+16);
+      // Colocamos la etiqueta a la derecha de su punto verde.
+      const rect={left:p.x+10,top:p.y-10,right:p.x+10+w,bottom:p.y+12};
+      if(rect.right>viewport.x-5||rect.left<4||rect.top<4||rect.bottom>viewport.y-4)continue;
+      // A escalas regionales separamos ligeramente más los rótulos.
+      const pad=zoom<=9?5:zoom<=11?3:1;
+      if(placed.some(r=>rect.left<r.right+pad&&rect.right>r.left-pad&&rect.top<r.bottom+pad&&rect.bottom>r.top-pad))continue;
+      placed.push(rect);
+      const major=(Number.isFinite(t.pop)&&t.pop>=4500)||norm(t.name)==='avila';
+      const label=L.marker([t.lat,t.lon],{
+        pane:'satTownLabels',
+        interactive:false,keyboard:false,
+        icon:L.divIcon({className:'sat-town-label'+(major?' major':''),html:'<span>'+esc(t.name)+'</span>',iconSize:[0,0],iconAnchor:[-10,10]})
+      });
+      label.addTo(satTownLabels);
+    }
+    if(!Lmap.hasLayer(satTownLabels))satTownLabels.addTo(Lmap);
+  }
+
+  // Coordenadas de cumbres extraídas de OpenStreetMap / Mapcarta. Las sierras
+  // se identifican con su cumbre de referencia; NO se dibujan perímetros inventados.
+  const peaks=[
+    {id:'almanzor',name:'Pico Almanzor',range:'Sierra de Gredos',lat:40.24603,lon:-5.29748,elev:2591},
+    {id:'mira',name:'La Mira',range:'Sierra de Gredos',lat:40.25993,lon:-5.18253,elev:2343},
+    {id:'torozo',name:'El Torozo',range:'Sierra de Gredos oriental',lat:40.31770,lon:-4.98660,elev:2021},
+    {id:'serrota',name:'La Serrota',range:'Sierra de la Serrota',lat:40.49927,lon:-5.07868,elev:2283},
+    {id:'zapatero',name:'Pico Zapatero',range:'Sierra de la Paramera',lat:40.49210,lon:-4.87020,elev:2158},
+    {id:'gorria',name:'Cerro de Gorría',range:'Sierra de Ávila',lat:40.65790,lon:-4.98470,elev:1726}
+  ];
+  const peakMarkers = new Map();
+  peaks.forEach(p=>{
+    const icon=L.divIcon({html:'<div class="peak-pin">▲</div>',className:'',iconSize:[24,24],iconAnchor:[12,14]});
+    const marker=L.marker([p.lat,p.lon],{icon,zIndexOffset:750})
+      .bindPopup(`<div class="pop-kind">${esc(p.range)}</div><strong>${esc(p.name)}</strong><br>${Number(p.elev).toLocaleString('es-ES')} m de altitud <span class="pop-more">Cota de referencia: OpenStreetMap. La etiqueta de la sierra identifica este pico, no el perímetro completo.</span>`);
+    marker.addTo(peaksLayer);peakMarkers.set(p.id,marker);
+  });
+  // Etiquetas explícitas de sierras, situadas en cumbres georreferenciadas.
+  const labelDefs=[
+    {id:'almanzor',html:'Sierra de Gredos <span>· Almanzor</span>',dir:'top',offset:[0,-12]},
+    {id:'serrota',html:'La Serrota',dir:'top',offset:[0,-12]},
+    {id:'zapatero',html:'La Paramera',dir:'top',offset:[0,-12]},
+    {id:'gorria',html:'Sierra de Ávila',dir:'top',offset:[0,-12]}
+  ];
+  labelDefs.forEach(({id,html,dir,offset})=>{
+    const p=peaks.find(x=>x.id===id),m=peakMarkers.get(id);
+    m.bindTooltip(html,{permanent:true,direction:dir,offset,className:'mountain-label',opacity:1,interactive:false});
+  });
+
+  function peakZoom(id){const p=peaks.find(x=>x.id===id);if(!p)return;
+    if(!$('togglePeaks').checked){$('togglePeaks').checked=true;peaksLayer.addTo(Lmap);}
+    Lmap.flyTo([p.lat,p.lon],11,{duration:1.0});
+    Lmap.once('moveend',()=>peakMarkers.get(id)?.openPopup());
+    closeMobile();
+  }
+  function renderPeakList(){
+    $('listTitle').textContent='Sierras y cumbres';$('listCount').textContent=peaks.length+' cumbres';
+    $('entries').innerHTML=peaks.map(p=>`<button type="button" class="entry" data-peak="${esc(p.id)}"><span class="entry-dot peak"></span><span><span class="entry-name">${esc(p.name)}</span><span class="entry-meta">${esc(p.range)} · ${p.elev.toLocaleString('es-ES')} m</span></span><span class="entry-right">↗</span></button>`).join('');
+  }
+  function setTab(tab){selectedTab=tab; $('tabTowns').classList.toggle('active',tab==='towns');$('tabPeaks').classList.toggle('active',tab==='peaks');$('tabTowns').setAttribute('aria-selected',String(tab==='towns'));$('tabPeaks').setAttribute('aria-selected',String(tab==='peaks'));if(tab==='peaks')renderPeakList();else renderTowns();}
+  $('tabTowns').addEventListener('click',()=>setTab('towns'));
+  $('tabPeaks').addEventListener('click',()=>setTab('peaks'));
+
+  function renderTowns(){if(selectedTab!=='towns')return;
+    const q=norm($('townSearch').value);
+    const filtered=towns.filter(t=>norm(t.name).includes(q));
+    $('listTitle').textContent=q?'Resultados de la búsqueda':'Todos los municipios';
+    $('listCount').textContent=filtered.length+' / '+towns.length;
+    $('entries').innerHTML=filtered.length ? filtered.map(t=>`<button type="button" class="entry" data-town="${esc(t.id)}"><span class="entry-dot"></span><span><span class="entry-name">${esc(t.name)}</span><span class="entry-meta">${t.pop!=null ? t.pop.toLocaleString('es-ES')+' habitantes · ' : ''}${t.source==='municipal'?'Localización oficial':'Centro municipal aprox.'}</span></span><span class="entry-right">↗</span></button>`).join('') : `<div class="empty-list">${towns.length?'No se encuentra ese municipio. Prueba a escribir parte del nombre.':'Cargando municipios…'}</div>`;
+  }
+  function selectTown(t){if(!t||!safeCoords(t))return;
+    if(!$('toggleTowns').checked){$('toggleTowns').checked=true;townsLayer.addTo(Lmap);}
+    Lmap.flyTo([t.lat,t.lon],12,{duration:1.0});
+    Lmap.once('moveend',()=>markers.get(t.id)?.openPopup());
+    closeMobile();
+  }
+  $('entries').addEventListener('click',event=>{
+    const row=event.target.closest('[data-town],[data-peak]');if(!row)return;
+    if(row.dataset.town)selectTown(towns.find(x=>x.id===row.dataset.town));
+    if(row.dataset.peak)peakZoom(row.dataset.peak);
+  });
+  $('townSearch').addEventListener('input',()=>{setTab('towns');renderTowns();});
+  $('townSearch').addEventListener('keydown',e=>{if(e.key==='Enter'){const q=norm(e.currentTarget.value);const t=towns.find(x=>norm(x.name)===q)||towns.find(x=>norm(x.name).includes(q));if(t)selectTown(t);}});
+  document.querySelectorAll('[data-shortcut]').forEach(el=>el.addEventListener('click',()=>{
+    const q=norm(el.dataset.shortcut);const t=towns.find(x=>norm(x.name)===q) || towns.find(x=>norm(x.name).includes(q));
+    if(t){$('townSearch').value=t.name;setTab('towns');selectTown(t)}else{$('townSearch').value=el.dataset.shortcut;setTab('towns');}
+  }));
+
+  function applyTownPoints(rows){
+    towns=rows.filter(safeCoords).map((r,i)=>({id:String(r.id??i),name:String(r.name),lat:Number(r.lat),lon:Number(r.lon),pop:r.pop===null||r.pop===undefined?null:Number(r.pop),source:r.source||'municipal'}))
+      .sort((a,b)=>a.name.localeCompare(b.name,'es'));
+    markers.clear();townsLayer.clearLayers();
+    const canvas=L.canvas({padding:.3});
+    towns.forEach(t=>{
+      const main=t.pop!==null&&t.pop>=4500;
+      const marker=L.circleMarker([t.lat,t.lon],{renderer:canvas,radius:main?5.6:3.3,color:'#f7fff6',weight:main?1.7:1,fillColor:main?'#126d53':'#2f9d7a',fillOpacity:.96,opacity:.95});
+      const popup=`<div class="pop-kind">Municipio de Ávila</div><strong>${esc(t.name)}</strong>${t.pop!==null&&Number.isFinite(t.pop)?`<br>${t.pop.toLocaleString('es-ES')} habitantes <small>(registro autonómico)</small>`:''}<span class="pop-more">${t.source==='municipal'?'Coordenadas del registro oficial de municipios.':'Posición aproximada calculada a partir de su término municipal.'}</span><a href="https://www.openstreetmap.org/?mlat=${t.lat}&mlon=${t.lon}#map=13/${t.lat}/${t.lon}" target="_blank" rel="noopener">Abrir ubicación ↗</a>`;
+      marker.bindPopup(popup);
+      marker.bindTooltip(t.name,{direction:'right',className:'town-tooltip',sticky:true});
+      marker.addTo(townsLayer);markers.set(t.id,marker);
+    });
+    $('townCount').textContent=towns.length+' municipios';
+    $('dataStatus').classList.add('ok');
+    $('dataStatus').querySelector('span').textContent=towns.length+' municipios localizados';
+    drawSatelliteTownLabels();
+    renderTowns();
+  }
+
+  function fromRegistry(r){
+    return {id:String(r.cod_ine??('05'+String(r.cod_municipio??'').padStart(3,'0'))),name:r.municipio,lat:r.latitud,lon:r.longitud,pop:r.poblacion,source:'municipal'};
+  }
+  // API Explore v2.1 (datos abiertos de la Junta de Castilla y León).
+  async function loadMunicipalityRegistry(){
+    const base='https://analisis.datosabiertos.jcyl.es/api/explore/v2.1/catalog/datasets/registro-de-municipios-de-castilla-y-leon/records';
+    const getPage=async(offset,condition)=>{
+      const params=new URLSearchParams({where:condition,limit:'100',offset:String(offset)});
+      const response=await fetch(base+'?'+params,{mode:'cors'});
+      if(!response.ok)throw new Error('API municipal: '+response.status);
+      return response.json();
+    };
+    let condition="cod_provincia = '05'";
+    let p=await getPage(0,condition);
+    if(!p.total_count){condition="provincia = 'ÁVILA'";p=await getPage(0,condition);}
+    if(!p.total_count)throw new Error('La API no devolvió municipios de Ávila');
+    const pages=[p];for(let off=100;off<p.total_count;off+=100)pages.push(await getPage(off,condition));
+    const rows=pages.flatMap(v=>v.results||[]).map(fromRegistry).filter(safeCoords);
+    if(rows.length<200)throw new Error('Registro incompleto: '+rows.length);
+    applyTownPoints(rows);
+  }
+
+  // Cálculo de punto de respaldo a partir del polígono municipal. Se utiliza
+  // sólo si falla la API oficial y se identifica como centro aproximado.
+  function approximatePoint(geometry){
+    if(!geometry)return null;
+    const polys=geometry.type==='Polygon'?[geometry.coordinates]:geometry.type==='MultiPolygon'?geometry.coordinates:[];
+    const rings=polys.map(poly=>poly[0]).filter(r=>r?.length>=4);
+    if(!rings.length)return null;
+    function area(r){let a=0;for(let i=0;i<r.length-1;i++)a+=r[i][0]*r[i+1][1]-r[i+1][0]*r[i][1];return Math.abs(a);}
+    const ring=rings.sort((a,b)=>area(b)-area(a))[0];let twiceA=0,xx=0,yy=0;
+    for(let i=0;i<ring.length-1;i++){const c=ring[i][0]*ring[i+1][1]-ring[i+1][0]*ring[i][1];twiceA+=c;xx+=(ring[i][0]+ring[i+1][0])*c;yy+=(ring[i][1]+ring[i+1][1])*c;}
+    if(Math.abs(twiceA)<1e-10)return {lon:ring[0][0],lat:ring[0][1]};
+    return {lon:xx/(3*twiceA),lat:yy/(3*twiceA)};
+  }
+  function loadMunicipalityFallback(){
+    if(!muniFeatures.length)return;
+    const fallback=muniFeatures.map(f=>{const pos=approximatePoint(f.geometry);if(!pos)return null;return {id:String(f.id),name:f.properties?.name||'Municipio '+f.id,lat:pos.lat,lon:pos.lon,pop:null,source:'approx'};}).filter(Boolean);
+    if(fallback.length){applyTownPoints(fallback);$('dataStatus').querySelector('span').textContent='Centros municipales aproximados · API oficial no disponible';}
+  }
+
+  async function loadTopo(){
+    const urls=['https://cdn.jsdelivr.net/npm/es-atlas@0.6.0/es/municipalities.json','https://unpkg.com/es-atlas@0.6.0/es/municipalities.json'];
+    let topo;
+    for(const url of urls){try{const r=await fetch(url);if(!r.ok)throw Error(r.status);topo=await r.json();break;}catch(e){console.warn('No disponible',url,e.message);}}
+    if(!topo)throw new Error('No se ha podido cargar la geometría del IGN');
+    const provs=topojson.feature(topo,topo.objects.provinces).features;
+    const province=provs.find(f=>String(f.id).padStart(2,'0')==='05' || norm(f.properties?.name)==='avila');
+    if(!province)throw new Error('No se encontró el límite provincial de Ávila');
+    const outline=L.geoJSON(province,{interactive:false,style:{color:'#f4a875',weight:3.1,opacity:.98,fillColor:'#cce6c7',fillOpacity:.055}}).addTo(borderLayer);
+    provinceBounds=outline.getBounds();Lmap.fitBounds(provinceBounds,{padding:[30,30],maxZoom:9});
+    muniFeatures=topojson.feature(topo,topo.objects.municipalities).features.filter(f=>String(f.id).startsWith('05'));
+    if(muniFeatures.length){
+      L.geoJSON({type:'FeatureCollection',features:muniFeatures},{interactive:false,style:{color:'#316e5b',weight:.65,opacity:.52,fill:false}}).addTo(municipalityLayer);
+    }
+    return muniFeatures.length;
+  }
+
+  function setBase(name){if(!tiles[name]||name===activeBase)return;
+    Lmap.removeLayer(tiles[activeBase]);if(Lmap.hasLayer(shade))Lmap.removeLayer(shade);
+    tiles[name].addTo(Lmap);tiles[name].bringToBack();
+    activeBase=name;
+    if(name!=='sat'){
+      Lmap.removeLayer(satTownLabels);
+      satTownLabels.clearLayers();
+    }else{
+      drawSatelliteTownLabels();
+    }
+    document.querySelectorAll('[data-base]').forEach(b=>b.classList.toggle('active',b.dataset.base===name));
+  }
+  document.querySelectorAll('[data-base]').forEach(btn=>btn.addEventListener('click',()=>setBase(btn.dataset.base)));
+  $('toggleTowns').addEventListener('change',e=>{
+    if(e.target.checked){townsLayer.addTo(Lmap);drawSatelliteTownLabels();}
+    else{Lmap.removeLayer(townsLayer);Lmap.removeLayer(satTownLabels);satTownLabels.clearLayers();}
+  });
+  Lmap.on('moveend zoomend resize',drawSatelliteTownLabels);
+  $('togglePeaks').addEventListener('change',e=>e.target.checked?peaksLayer.addTo(Lmap):Lmap.removeLayer(peaksLayer));
+  $('toggleMunicipal').addEventListener('change',e=>e.target.checked?municipalityLayer.addTo(Lmap):Lmap.removeLayer(municipalityLayer));
+  $('resetView').addEventListener('click',()=>{Lmap.fitBounds(provinceBounds,{padding:[30,30],maxZoom:9});closeMobile();});
+  function closeMobile(){if(window.innerWidth<=640){$('sidebar').classList.add('collapsed');$('mobileToggle').textContent='Explorar ↓';$('mobileToggle').setAttribute('aria-expanded','false');setTimeout(()=>Lmap.invalidateSize(),250);}}
+  $('mobileToggle').addEventListener('click',()=>{const expanded=$('sidebar').classList.toggle('collapsed')===false;$('mobileToggle').textContent=expanded?'Cerrar ↑':'Explorar ↓';$('mobileToggle').setAttribute('aria-expanded',String(expanded));setTimeout(()=>Lmap.invalidateSize(),230);});
+  window.addEventListener('resize',()=>Lmap.invalidateSize());
+
+  // La información de municipios y límites se solicita de fuentes distintas,
+  // de modo que el mapa puede seguir funcionando si falla una de ellas.
+  Promise.allSettled([loadMunicipalityRegistry(),loadTopo()]).then(results=>{
+    const [reg,geo]=results;
+    if(reg.status==='rejected'){
+      console.warn('Registro autonómico no disponible:',reg.reason);
+      loadMunicipalityFallback();
+      if(!towns.length){$('dataStatus').querySelector('span').textContent='No se han podido cargar los municipios';$('entries').innerHTML='<div class="empty-list">Error al descargar los municipios. Comprueba tu conexión a Internet y vuelve a abrir el archivo.</div>';}
+    }
+    if(geo.status==='rejected'){
+      console.warn('Límites no disponibles:',geo.reason);
+      if(reg.status==='fulfilled'){$('dataStatus').querySelector('span').textContent='Municipios cargados · límite no disponible';}
+    }
+  });
+  renderTowns();
+})();
+</script>
+<script src="weather.js" defer></script></body>
+</html>
+
