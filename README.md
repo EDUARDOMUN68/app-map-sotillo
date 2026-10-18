@@ -1,11 +1,11 @@
 # APP MAP.SOTILLO
 
-Mapa de Ávila y previsión meteorológica para Sotillo de la Adrada. Versión 0.1.2.
+Mapa de Ávila y previsión meteorológica para Sotillo de la Adrada. Versión 0.1.3.
 
 ## Funciones
 
 - Previsión por horas para las próximas 36 horas: temperatura, sensación, humedad relativa, precipitación, nubosidad, viento y rachas.
-- Resumen textual y 15 días con máximas, mínimas, lluvia y humedad media diaria.
+- Resumen textual y 14 días con máximas, mínimas, lluvia y humedad media diaria.
 - Mapas de previsión de nubes, lluvia y viento mediante Windy.
 - Atlas provincial con municipios, búsqueda, relieve, calles, satélite con nombres y cumbres.
 - Interfaz clara y manifiesto para instalar desde el navegador del móvil mediante HTTPS.
@@ -34,11 +34,14 @@ En Android: menú del navegador, Instalar aplicación o Añadir a pantalla de in
 
 ## Historial
 
+- 0.1.3: 14 días, subtítulo en una línea y dirección del viento con flechas (destino) y puntos cardinales (origen).
+
 - 0.1.2: botón Instalar app cuando Chrome ofrece instalación; iconos PNG prioritarios y registro del servicio independiente del tiempo.
 
 - 0.1.1: previsión de 15 días antes de las próximas 36 horas; mapas al final.
 
 - 0.1.0: importación del atlas y primera integración meteorológica, humedad, resumen, horas, 15 días, Windy e instalación móvil.
+
 
 
 

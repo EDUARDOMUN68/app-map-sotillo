@@ -9,9 +9,15 @@
   const values = (rows,key) => rows.map(r=>r[key]).filter(Number.isFinite);
   const describe = c => !Number.isFinite(c)?'Sin datos':c===0?'Despejado':c<=2?'Poco nuboso':c===3?'Cubierto':c<=48?'Niebla':c<=57?'Llovizna':c<=67?'Lluvia':c<=77?'Nieve':c<=82?'Chubascos':c<=86?'Chubascos de nieve':c>=95?'Tormenta':'Sin datos';
   const icon = c => !Number.isFinite(c)?'—':c===0?'☀️':c<=2?'🌤️':c===3?'☁️':c<=48?'🌫️':c<=67?'🌧️':c<=77?'❄️':c<=82?'🌦️':c<=86?'❄️':c>=95?'⛈️':'—';
-  const variables=['temperature_2m','relative_humidity_2m','apparent_temperature','precipitation','cloud_cover','wind_speed_10m','wind_gusts_10m','weather_code'];
-  const url = 'https://api.open-meteo.com/v1/ecmwf?'+new URLSearchParams({latitude:'40.2912',longitude:'-4.58385',hourly:variables.join(','),models:'ecmwf_ifs',forecast_days:'15',timezone:zone,timeformat:'unixtime',wind_speed_unit:'kmh'});
-  const cacheKey='sotillo-weather-v1';
+  const wind = degrees => {
+    if(!Number.isFinite(degrees))return '—';
+    const angle=((degrees%360)+360)%360;
+    const from=['N','NE','E','SE','S','SO','O','NO'][Math.round(angle/45)%8];
+    return `<span class="wind-direction" title="Viento del ${from}; la flecha indica hacia dónde sopla" aria-label="Viento del ${from}"><span aria-hidden="true" class="wind-arrow" style="transform:rotate(${angle+180}deg)">↑</span> ${from}</span>`;
+  };
+  const variables=['temperature_2m','relative_humidity_2m','apparent_temperature','precipitation','cloud_cover','wind_speed_10m','wind_gusts_10m','wind_direction_10m','weather_code'];
+  const url = 'https://api.open-meteo.com/v1/ecmwf?'+new URLSearchParams({latitude:'40.2912',longitude:'-4.58385',hourly:variables.join(','),models:'ecmwf_ifs',forecast_days:'14',timezone:zone,timeformat:'unixtime',wind_speed_unit:'kmh'});
+  const cacheKey='sotillo-weather-v2';
   let saved=null, busy=false;
   function rows(data){
     const h=data.hourly;
@@ -23,14 +29,14 @@
     const next=all.filter(r=>r.time>=Math.floor(now/3600)*3600).slice(0,36);
     const r=next[0];
     if(!r)throw Error('La previsión guardada ha caducado');
-    $('weather-now').innerHTML=`<div><span class="weather-kicker">Previsión para ${fmt(r.time,{weekday:'long',hour:'2-digit',minute:'2-digit'})}</span><h2>${icon(r.weather_code)} ${n(r.temperature_2m,' °C')}</h2><p>${describe(r.weather_code)} · Sensación ${n(r.apparent_temperature,' °C')}</p></div><div class="weather-metrics"><p><strong>${n(r.relative_humidity_2m,' %')}</strong><span>Humedad relativa</span></p><p><strong>${n(r.wind_speed_10m,' km/h')}</strong><span>Viento · rachas ${n(r.wind_gusts_10m,' km/h')}</span></p><p><strong>${n(r.precipitation,' mm',1)}</strong><span>Precipitación en la hora</span></p></div>`;
+    $('weather-now').innerHTML=`<div><span class="weather-kicker">Previsión para ${fmt(r.time,{weekday:'long',hour:'2-digit',minute:'2-digit'})}</span><h2>${icon(r.weather_code)} ${n(r.temperature_2m,' °C')}</h2><p>${describe(r.weather_code)} · Sensación ${n(r.apparent_temperature,' °C')}</p></div><div class="weather-metrics"><p><strong>${n(r.relative_humidity_2m,' %')}</strong><span>Humedad relativa</span></p><p><strong>${n(r.wind_speed_10m,' km/h')}</strong><span>${wind(r.wind_direction_10m)} · rachas ${n(r.wind_gusts_10m,' km/h')}</span></p><p><strong>${n(r.precipitation,' mm',1)}</strong><span>Precipitación en la hora</span></p></div>`;
     const upcoming=next.slice(0,24), rain=values(upcoming,'precipitation'), hum=values(upcoming,'relative_humidity_2m'), cloud=values(upcoming,'cloud_cover');
     const wet=upcoming.find(x=>Number.isFinite(x.precipitation)&&x.precipitation>=.1);
     $('weather-summary').textContent=`Próximas 24 horas: ${wet?'se prevé precipitación desde las '+fmt(wet.time,{weekday:'short',hour:'2-digit',minute:'2-digit'}):rain.length===upcoming.length?'sin precipitación prevista':'precipitación no disponible'}. Humedad entre ${hum.length?n(Math.min(...hum),' %'):'—'} y ${hum.length?n(Math.max(...hum),' %'):'—'}. Nubosidad media ${n(mean(cloud),' %')}. Resumen automático a partir de la previsión.`;
-    $('weather-hours').innerHTML=next.map(x=>`<tr><th scope="row">${fmt(x.time,{weekday:'short',day:'2-digit',hour:'2-digit',minute:'2-digit'})}</th><td>${icon(x.weather_code)} ${describe(x.weather_code)}</td><td>${n(x.temperature_2m,'°')}</td><td>${n(x.apparent_temperature,'°')}</td><td>${n(x.relative_humidity_2m,' %')}</td><td>${n(x.precipitation,' mm',1)}</td><td>${n(x.cloud_cover,' %')}</td><td>${n(x.wind_speed_10m,' km/h')} / ${n(x.wind_gusts_10m,' km/h')}</td></tr>`).join('');
+    $('weather-hours').innerHTML=next.map(x=>`<tr><th scope="row">${fmt(x.time,{weekday:'short',day:'2-digit',hour:'2-digit',minute:'2-digit'})}</th><td>${icon(x.weather_code)} ${describe(x.weather_code)}</td><td>${n(x.temperature_2m,'°')}</td><td>${n(x.apparent_temperature,'°')}</td><td>${n(x.relative_humidity_2m,' %')}</td><td>${n(x.precipitation,' mm',1)}</td><td>${n(x.cloud_cover,' %')}</td><td>${wind(x.wind_direction_10m)} ${n(x.wind_speed_10m,' km/h')} / ${n(x.wind_gusts_10m,' km/h')}</td></tr>`).join('');
     const groups=new Map();
     all.forEach(x=>{const k=dayKey(x.time);if(!groups.has(k))groups.set(k,[]);groups.get(k).push(x)});
-    $('weather-days').innerHTML=[...groups.values()].slice(0,15).map((g,i)=>{
+    $('weather-days').innerHTML=[...groups.values()].slice(0,14).map((g,i)=>{
       const temp=values(g,'temperature_2m'), humidity=values(g,'relative_humidity_2m'), rain=values(g,'precipitation');
       const codes=values(g,'weather_code');const code=codes.length?Math.max(...codes):null;
       return `<article class="day-card"><h3>${fmt(g[0].time,{weekday:'short',day:'numeric',month:'short'})}</h3><p>${icon(code)} ${code===null?'Sin datos':describe(code)}</p><strong>${temp.length?n(Math.max(...temp),'°'):'—'} <span>/ ${temp.length?n(Math.min(...temp),'°'):'—'}</span></strong><p>💧 Humedad media ${n(mean(humidity),' %')}</p><p>Lluvia ${rain.length===g.length?n(rain.reduce((s,v)=>s+v,0),' mm',1):'—'}</p>${i>=7?'<small>Tendencia · mayor incertidumbre</small>':''}</article>`;
@@ -72,5 +78,6 @@
   refresh();
 
 })();
+
 
 
