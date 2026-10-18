@@ -13,7 +13,7 @@
     if(!Number.isFinite(degrees))return '—';
     const angle=((degrees%360)+360)%360;
     const from=['N','NE','E','SE','S','SO','O','NO'][Math.round(angle/45)%8];
-    return `<span class="wind-direction" title="Viento del ${from}; la flecha indica hacia dónde sopla" aria-label="Viento del ${from}"><span aria-hidden="true" class="wind-arrow" style="transform:rotate(${angle+180}deg)">↑</span> ${from}</span>`;
+    return `<span class="wind-direction" title="Viento del ${from}; la flecha indica hacia dónde sopla" aria-label="Viento del ${from}"><svg aria-hidden="true" class="wind-arrow" viewBox="0 0 24 24" style="transform:rotate(${angle+180}deg)"><path d="M12 21V3M4 11l8-8 8 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg> ${from}</span>`;
   };
   const variables=['temperature_2m','relative_humidity_2m','apparent_temperature','precipitation','cloud_cover','wind_speed_10m','wind_gusts_10m','wind_direction_10m','weather_code'];
   const url = 'https://api.open-meteo.com/v1/ecmwf?'+new URLSearchParams({latitude:'40.2912',longitude:'-4.58385',hourly:variables.join(','),models:'ecmwf_ifs',forecast_days:'14',timezone:zone,timeformat:'unixtime',wind_speed_unit:'kmh'});
@@ -78,6 +78,7 @@
   refresh();
 
 })();
+
 
 
 
