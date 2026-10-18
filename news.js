@@ -2,6 +2,11 @@
   'use strict';
   const $=id=>document.getElementById(id);
   let loadedAt=0;
+  const today=()=>{
+    const parts=Object.fromEntries(new Intl.DateTimeFormat('es-ES',{timeZone:'Europe/Madrid',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).map(p=>[p.type,p.value]));
+    return `${parts.year}-${parts.month}-${parts.day}`;
+  };
+  const active=item=>!/^\d{4}-\d{2}-\d{2}$/.test(item.eventEnd||'')||item.eventEnd>=today();
   async function loadHighlights(){
     try{
       const response=await fetch('./news-social.json',{cache:'no-cache',signal:AbortSignal.timeout(15000)});
@@ -9,7 +14,7 @@
       const data=await response.json();
       if(!Array.isArray(data.items))throw Error('Publicaciones no disponibles');
       const seen=new Set();
-      const cards=data.items.filter(item=>{if(!item.id||seen.has(item.id))return false;seen.add(item.id);return true}).map(item=>{
+      const cards=data.items.filter(active).filter(item=>{if(!item.id||seen.has(item.id))return false;seen.add(item.id);return true}).map(item=>{
         const url=new URL(item.url);
         if(!['https://www.instagram.com','https://x.com','https://www.facebook.com'].includes(url.origin))throw Error('Red inesperada');
         const article=document.createElement('article');article.className='news-card';
@@ -21,6 +26,7 @@
         article.append(title,source,date,summary,link);return article;
       });
       $('news-highlights').replaceChildren(...cards);
+      if(!cards.length)$('news-highlights').textContent='No hay actividades destacadas vigentes en esta selección. Puedes consultar nuevas publicaciones en las redes de abajo.';
     }catch(error){$('news-highlights').textContent='No se pudieron cargar las destacadas de redes. Usa los enlaces a los perfiles municipales.'}
   }
   async function loadNews(){
@@ -32,7 +38,7 @@
       if(!response.ok)throw Error(response.status);
       const data=await response.json();
       if(!Array.isArray(data.items)||!data.items.length)throw Error('Sin titulares');
-      const cards=data.items.map(item=>{
+      const cards=data.items.filter(active).map(item=>{
         const url=new URL(item.url);
         if(url.origin!=='https://www.sotillo.net')throw Error('Fuente inesperada');
         const article=document.createElement('article');article.className='news-card';
@@ -49,6 +55,8 @@
     }catch(error){$('news-status').textContent='No se pudo actualizar la portada. Puedes consultar directamente la web y las redes oficiales en los enlaces de abajo.'}
   }
   document.querySelectorAll('[data-page="news"]').forEach(b=>b.addEventListener('click',loadNews));
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!$('news-page').hidden){loadedAt=0;loadNews()}});
+  setInterval(()=>{if(!document.hidden&&!$('news-page').hidden)loadNews()},60000);
   $('news-refresh').addEventListener('click',()=>{loadedAt=0;loadNews()});
   $('news-facebook-load').addEventListener('click',()=>{
     const iframe=document.createElement('iframe');iframe.title='Publicaciones del Ayuntamiento en Facebook';iframe.className='news-facebook';
