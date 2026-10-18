@@ -2,8 +2,30 @@
   'use strict';
   const $=id=>document.getElementById(id);
   let loadedAt=0;
+  async function loadHighlights(){
+    try{
+      const response=await fetch('./news-social.json',{cache:'no-cache',signal:AbortSignal.timeout(15000)});
+      if(!response.ok)throw Error(response.status);
+      const data=await response.json();
+      if(!Array.isArray(data.items))throw Error('Publicaciones no disponibles');
+      const seen=new Set();
+      const cards=data.items.filter(item=>{if(!item.id||seen.has(item.id))return false;seen.add(item.id);return true}).map(item=>{
+        const url=new URL(item.url);
+        if(!['https://www.instagram.com','https://x.com','https://www.facebook.com'].includes(url.origin))throw Error('Red inesperada');
+        const article=document.createElement('article');article.className='news-card';
+        const title=document.createElement('h2');title.textContent=item.title;
+        const source=document.createElement('p');source.textContent=item.source;
+        const date=document.createElement('p');date.textContent='Publicación: '+new Date(item.publishedDate+'T12:00:00Z').toLocaleDateString('es-ES',{timeZone:'Europe/Madrid'});
+        const summary=document.createElement('p');summary.className='news-summary';summary.textContent=item.summary;
+        const link=document.createElement('a');link.href=url.href;link.target='_blank';link.rel='noopener';link.textContent='Ver publicación original ↗';
+        article.append(title,source,date,summary,link);return article;
+      });
+      $('news-highlights').replaceChildren(...cards);
+    }catch(error){$('news-highlights').textContent='No se pudieron cargar las destacadas de redes. Usa los enlaces a los perfiles municipales.'}
+  }
   async function loadNews(){
     if(Date.now()-loadedAt<60000)return;
+    loadHighlights();
     $('news-status').textContent='Consultando noticias municipales…';
     try{
       const response=await fetch('./news.json',{cache:'no-cache',signal:AbortSignal.timeout(15000)});
