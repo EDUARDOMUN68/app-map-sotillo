@@ -1,6 +1,6 @@
 # APP MAP.SOTILLO
 
-Mapa de Ávila y previsión meteorológica para Sotillo de la Adrada. Versión 0.1.3.
+Mapa de Ávila y previsión meteorológica para Sotillo de la Adrada. Versión 0.1.4.
 
 ## Funciones
 
@@ -24,7 +24,7 @@ Municipios: Junta de Castilla y León. Geometrías: es-atlas / IGN. Cartografía
 
 ## Uso
 
-Aplicación estática sin compilación. Servir por HTTPS (por ejemplo GitHub Pages). Publicar únicamente `index.html`, `weather.js`, `install.js`, `weather.css`, `sw.js`, `manifest.webmanifest` e iconos. No publicar todo el directorio de trabajo.
+Aplicación estática sin compilación. Servir por HTTPS (por ejemplo GitHub Pages). Publicar únicamente `index.html`, `weather.js`, `install.js`, `refresh.js`, `weather.css`, `sw.js`, `manifest.webmanifest` e iconos. No publicar todo el directorio de trabajo.
 
 En Android: menú del navegador, Instalar aplicación o Añadir a pantalla de inicio. En iPhone: Compartir, Añadir a pantalla de inicio. La disponibilidad y presentación de instalación dependen del navegador. Sin conexión se conserva la estructura y la previsión guardada; los mapas externos no están disponibles.
 
@@ -34,6 +34,8 @@ En Android: menú del navegador, Instalar aplicación o Añadir a pantalla de in
 
 ## Historial
 
+- 0.1.4: versión pequeña en cabecera y gesto de tirar hacia abajo desde el inicio de El tiempo para buscar versión nueva y recargar previsión. El atlas mantiene sus gestos de mapa.
+
 - 0.1.3: 14 días, subtítulo en una línea y dirección del viento con flechas (destino) y puntos cardinales (origen).
 
 - 0.1.2: botón Instalar app cuando Chrome ofrece instalación; iconos PNG prioritarios y registro del servicio independiente del tiempo.
@@ -41,6 +43,7 @@ En Android: menú del navegador, Instalar aplicación o Añadir a pantalla de in
 - 0.1.1: previsión de 15 días antes de las próximas 36 horas; mapas al final.
 
 - 0.1.0: importación del atlas y primera integración meteorológica, humedad, resumen, horas, 15 días, Windy e instalación móvil.
+
 
 
 
