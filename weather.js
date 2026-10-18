@@ -70,6 +70,7 @@
   setInterval(()=>{if(!document.hidden)refresh()},60000);
   try{const record=JSON.parse(localStorage.getItem(cacheKey));if(record&&Number.isFinite(record.at)){render(record);saved=record}}catch{}
   refresh();
-  if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+
 })();
+
 
