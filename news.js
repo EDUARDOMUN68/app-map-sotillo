@@ -1,0 +1,36 @@
+(() => {
+  'use strict';
+  const $=id=>document.getElementById(id);
+  let loadedAt=0;
+  async function loadNews(){
+    if(Date.now()-loadedAt<60000)return;
+    $('news-status').textContent='Consultando noticias municipales…';
+    try{
+      const response=await fetch('./news.json',{cache:'no-cache',signal:AbortSignal.timeout(15000)});
+      if(!response.ok)throw Error(response.status);
+      const data=await response.json();
+      if(!Array.isArray(data.items)||!data.items.length)throw Error('Sin titulares');
+      const cards=data.items.map(item=>{
+        const url=new URL(item.url);
+        if(url.origin!=='https://www.sotillo.net')throw Error('Fuente inesperada');
+        const article=document.createElement('article');article.className='news-card';
+        const heading=document.createElement('h2');heading.textContent=item.title;
+        const source=document.createElement('p');source.textContent='Ayuntamiento de Sotillo de la Adrada';
+        const link=document.createElement('a');link.href=url.href;link.target='_blank';link.rel='noopener';link.textContent='Leer en la web municipal ↗';
+        article.append(heading,source,link);return article;
+      });
+      $('news-items').replaceChildren(...cards);loadedAt=Date.now();
+      const date=new Date(data.checkedAt);
+      if(!Number.isFinite(date.getTime()))throw Error('Fecha inválida');
+      const stale=Date.now()-date.getTime()>24*3600000;
+      $('news-status').textContent=`${stale?'Información pendiente de actualizar. ':''}Portada municipal consultada el ${date.toLocaleString('es-ES',{timeZone:'Europe/Madrid'})}. Esta fecha indica la consulta, no la publicación de los anuncios.`;
+    }catch(error){$('news-status').textContent='No se pudo actualizar la portada. Puedes consultar directamente la web y las redes oficiales en los enlaces de abajo.'}
+  }
+  document.querySelectorAll('[data-page="news"]').forEach(b=>b.addEventListener('click',loadNews));
+  $('news-refresh').addEventListener('click',()=>{loadedAt=0;loadNews()});
+  $('news-facebook-load').addEventListener('click',()=>{
+    const iframe=document.createElement('iframe');iframe.title='Publicaciones del Ayuntamiento en Facebook';iframe.className='news-facebook';
+    iframe.src='https://www.facebook.com/plugins/page.php?'+new URLSearchParams({href:'https://www.facebook.com/ayuntamientodeSotillo/',tabs:'timeline',width:'340',height:'600',small_header:'true',adapt_container_width:'true',hide_cover:'false',show_facepile:'false'});
+    $('news-facebook').replaceChildren(iframe);$('news-facebook-load').hidden=true;
+  });
+})();

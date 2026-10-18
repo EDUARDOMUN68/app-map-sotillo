@@ -1,6 +1,6 @@
 # APP MAP.SOTILLO
 
-Mapa de Ávila y previsión meteorológica para Sotillo de la Adrada. Versión 0.1.6.
+Mapa de Ávila y previsión meteorológica para Sotillo de la Adrada. Versión 0.2.0.
 
 ## Funciones
 
@@ -32,7 +32,13 @@ En Android: menú del navegador, Instalar aplicación o Añadir a pantalla de in
 
 `index.html` conserva el atlas Leaflet y contiene la pantalla meteorológica. `weather.js` obtiene, valida y presenta las previsiones. `weather.css` adapta las pantallas a fondos claros. `sw.js` mantiene la estructura local; no intercepta peticiones a proveedores externos. No hay servidor, cuenta de usuario ni base de datos.
 
+## Noticias municipales
+
+Pestaña Noticias después de El tiempo. Seis titulares de la portada de sotillo.net, sin copiar artículos completos ni imágenes. La fecha visible es la comprobación de la fuente, no la publicación. El orden sigue la portada, no pretende ser cronológico. GitHub Actions ejecuta scripts/update-news.mjs cada tres horas y conserva los datos anteriores si falla. El cliente revalida news.json al entrar y permite actualizar manualmente; si los datos tienen más de 24 horas avisa. Facebook y X verificados en enlaces de la web municipal; Instagram @aytosotillo indicado por el usuario. Redes accesibles por enlaces; visor Facebook opcional, puede exigir sesión. No se importa un feed de Instagram o X sin su API.
+
 ## Historial
+
+- 0.2.0: noticias municipales, enlaces a Instagram/Facebook/X, visor Facebook opcional y actualización de titulares cada tres horas.
 
 - 0.1.6: flechas de viento SVG con tamaño fijo y explicación específica de colores de lluvia y animación de viento en el visor.
 
@@ -47,6 +53,7 @@ En Android: menú del navegador, Instalar aplicación o Añadir a pantalla de in
 - 0.1.1: previsión de 15 días antes de las próximas 36 horas; mapas al final.
 
 - 0.1.0: importación del atlas y primera integración meteorológica, humedad, resumen, horas, 15 días, Windy e instalación móvil.
+
 
 
 

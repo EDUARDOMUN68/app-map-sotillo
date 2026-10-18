@@ -62,11 +62,15 @@
   }
   document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>{
     const weather=b.dataset.page==='weather';
-    $('weather-page').hidden=!weather;$('atlas-page').hidden=weather;
+    $('weather-page').hidden=!weather;$('atlas-page').hidden=b.dataset.page!=='atlas';
+    $('news-page').hidden=b.dataset.page!=='news';
     document.querySelectorAll('[data-page]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
     if(weather)refresh();else window.dispatchEvent(new Event('resize'));
   }));
   document.querySelectorAll('[data-weather-layer]').forEach(b=>b.addEventListener('click',()=>{
+    const descriptions={clouds:['Nubes previstas','Los colores muestran la nubosidad prevista. Las líneas en movimiento representan el viento.'],rain:['Lluvia prevista · escala en mm','Las manchas de colores indican la lluvia prevista según la escala del mapa. Las líneas animadas representan el viento, no gotas de lluvia.'],wind:['Viento previsto · escala en km/h','Los colores indican velocidad y las líneas animadas muestran el movimiento del viento.']};
+    $('weather-map-title').textContent=descriptions[b.dataset.weatherLayer][0];
+    $('weather-map-explanation').textContent=descriptions[b.dataset.weatherLayer][1];
     $('weather-map').src='https://embed.windy.com/embed.html?'+new URLSearchParams({type:'map',location:'coordinates',lat:'40.2912',lon:'-4.58385',zoom:'8',overlay:b.dataset.weatherLayer,product:'ecmwf',level:'surface',metricTemp:'°C',metricWind:'km/h',metricRain:'mm'});
     document.querySelectorAll('[data-weather-layer]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
   }));
