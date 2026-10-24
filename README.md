@@ -1,6 +1,6 @@
 # APP MAP.SOTILLO
 
-Mapa de Ávila y previsión meteorológica para Sotillo de la Adrada. Versión 0.2.2.
+Mapa de Ávila y previsión meteorológica para Sotillo de la Adrada. Versión 0.2.3.
 
 ## Funciones
 
@@ -38,6 +38,8 @@ Pestaña Noticias después de El tiempo. Seis titulares de la portada de sotillo
 
 ## Historial
 
+- 0.2.3: destacada verificada del curso gratuito de carretillas elevadoras de AEDUCA, publicado por el Ayuntamiento el 22/10/2026. Sin fecha final inventada. Las destacadas siguen siendo una selección manual; la consulta automática solo cubre la web municipal.
+
 - 0.2.2: oculta actividades tras su fecha final, en hora de Madrid. Se conservan durante el último día. Avisos sin fecha de caducidad clara se mantienen; fechas incompletas e intervalos no se adivinan.
 
 - 0.2.1: destacadas de redes verificadas, independientes de la portada automática; incorporado concurso Tapeando Sotillo 2026 con enlace de Instagram aportado y comprobado. Sin importación automática de perfiles.
@@ -57,6 +59,7 @@ Pestaña Noticias después de El tiempo. Seis titulares de la portada de sotillo
 - 0.1.1: previsión de 15 días antes de las próximas 36 horas; mapas al final.
 
 - 0.1.0: importación del atlas y primera integración meteorológica, humedad, resumen, horas, 15 días, Windy e instalación móvil.
+
 
 
 
