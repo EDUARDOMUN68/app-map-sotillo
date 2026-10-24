@@ -13,6 +13,12 @@
       if(!response.ok)throw Error(response.status);
       const data=await response.json();
       if(!Array.isArray(data.items))throw Error('Publicaciones no disponibles');
+      const checked=new Date(data.checkedAt);
+      const valid=Number.isFinite(checked.getTime());
+      const stale=!valid||Date.now()-checked.getTime()>24*3600000;
+      $('news-social-status').textContent=data.status!=='ok'||stale
+        ? 'No se ha podido obtener una consulta reciente de Instagram. Se conservan las noticias anteriores; puedes abrir el perfil oficial.'
+        : 'Instagram consultado automáticamente el '+checked.toLocaleString('es-ES',{timeZone:'Europe/Madrid'})+'. Se consultan las seis publicaciones recientes del visor público.';
       const seen=new Set();
       const cards=data.items.filter(active).filter(item=>{if(!item.id||seen.has(item.id))return false;seen.add(item.id);return true}).map(item=>{
         const url=new URL(item.url);
@@ -23,11 +29,20 @@
         const date=document.createElement('p');date.textContent='Publicación: '+new Date(item.publishedDate+'T12:00:00Z').toLocaleDateString('es-ES',{timeZone:'Europe/Madrid'});
         const summary=document.createElement('p');summary.className='news-summary';summary.textContent=item.summary;
         const link=document.createElement('a');link.href=url.href;link.target='_blank';link.rel='noopener';link.textContent='Ver publicación original ↗';
+        if(item.imageUrl){
+          try{
+            const imageUrl=new URL(item.imageUrl);
+            if(imageUrl.protocol==='https:'&&/(^|\.)(cdninstagram\.com|fbcdn\.net)$/.test(imageUrl.hostname)){
+              const image=document.createElement('img');image.src=imageUrl.href;image.alt='Cartel de la publicación: '+item.title;image.className='news-poster';image.loading='lazy';image.referrerPolicy='no-referrer';
+              image.addEventListener('error',()=>image.remove());article.append(image);
+            }
+          }catch{}
+        }
         article.append(title,source,date,summary,link);return article;
       });
       $('news-highlights').replaceChildren(...cards);
       if(!cards.length)$('news-highlights').textContent='No hay actividades destacadas vigentes en esta selección. Puedes consultar nuevas publicaciones en las redes de abajo.';
-    }catch(error){$('news-highlights').textContent='No se pudieron cargar las destacadas de redes. Usa los enlaces a los perfiles municipales.'}
+    }catch(error){$('news-social-status').textContent='No se pudieron actualizar las publicaciones de redes.';$('news-highlights').textContent='Consulta el perfil municipal en los enlaces de abajo.'}
   }
   async function loadNews(){
     if(Date.now()-loadedAt<60000)return;

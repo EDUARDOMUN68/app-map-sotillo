@@ -1,6 +1,6 @@
 # APP MAP.SOTILLO
 
-Mapa de Ávila y previsión meteorológica para Sotillo de la Adrada. Versión 0.2.3.
+Mapa de Ávila y previsión meteorológica para Sotillo de la Adrada. Versión 0.3.0.
 
 ## Funciones
 
@@ -34,9 +34,17 @@ En Android: menú del navegador, Instalar aplicación o Añadir a pantalla de in
 
 ## Noticias municipales
 
-Pestaña Noticias después de El tiempo. Seis titulares de la portada de sotillo.net, sin copiar artículos completos ni imágenes. La fecha visible es la comprobación de la fuente, no la publicación. El orden sigue la portada, no pretende ser cronológico. GitHub Actions ejecuta scripts/update-news.mjs cada tres horas y conserva los datos anteriores si falla. El cliente revalida news.json al entrar y permite actualizar manualmente; si los datos tienen más de 24 horas avisa. Facebook y X verificados en enlaces de la web municipal; Instagram @aytosotillo indicado por el usuario. Redes accesibles por enlaces; visor Facebook opcional, puede exigir sesión. No se importa un feed de Instagram o X sin su API.
+Pestaña Noticias después de El tiempo. Seis titulares de la portada de sotillo.net, sin copiar artículos completos ni imágenes. La fecha visible es la comprobación de la fuente, no la publicación. El orden sigue la portada, no pretende ser cronológico. GitHub Actions ejecuta scripts/update-news.mjs cada tres horas y conserva los datos anteriores si falla. El cliente revalida news.json al entrar y permite actualizar manualmente; si los datos tienen más de 24 horas avisa. Facebook y X verificados en enlaces de la web municipal; Instagram @aytosotillo indicado por el usuario. Redes accesibles por enlaces; visor Facebook opcional, puede exigir sesión. Instagram se consulta automáticamente desde su visor público oficial, sin claves, cada tres horas. X y Facebook mantienen accesos externos; no se garantiza cobertura de publicaciones exclusivas de esas plataformas.
+
+## Recogida automática de Instagram
+
+El actualizador scripts/update-social.mjs lee los datos JSON incluidos en el visor público oficial de @aytosotillo, valida autor y enlaces y no ejecuta código de la fuente. Consulta las seis publicaciones recientes disponibles y conserva hasta 40 noticias previas. Agrupa títulos duplicados. social-overrides.json conserva títulos/fechas revisados sin que el actualizador los borre. Los carteles se muestran desde el CDN público de Instagram; si fallan se conserva texto y enlace. No se reubican imágenes ni se guardan cookies, sesiones o claves.
+
+checkedAt es la última consulta correcta; lastAttemptAt y status reflejan fallos sin borrar datos ni aparentar actualización. La app avisa ante fallos o datos con más de 24 horas. La web municipal y la red se consultan de forma independiente. Instagram puede modificar o limitar el visor público; no se promete disponibilidad ininterrumpida ni importar publicaciones más antiguas que su ventana pública.
 
 ## Historial
+
+- 0.3.0: recogida automática del visor público oficial de Instagram, carteles, deduplicación, conservación y estado de fuente verificable.
 
 - 0.2.3: destacada verificada del curso gratuito de carretillas elevadoras de AEDUCA, publicado por el Ayuntamiento el 22/10/2026. Sin fecha final inventada. Las destacadas siguen siendo una selección manual; la consulta automática solo cubre la web municipal.
 
@@ -59,6 +67,7 @@ Pestaña Noticias después de El tiempo. Seis titulares de la portada de sotillo
 - 0.1.1: previsión de 15 días antes de las próximas 36 horas; mapas al final.
 
 - 0.1.0: importación del atlas y primera integración meteorológica, humedad, resumen, horas, 15 días, Windy e instalación móvil.
+
 
 
 
