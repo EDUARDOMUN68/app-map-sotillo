@@ -94,3 +94,7 @@ Tarjetas diarias centradas, icono meteorológico ampliado y humedad en dos líne
 ### 0.3.4
 
 Luna con cráteres suaves, halo plateado y detalle de relieve; tamaño de28px en previsión por horas. Mantiene fase, superficie blanca y sombra diferenciada.
+
+### 0.3.5
+
+Iconos horarios del sol, nubes y precipitación ampliados a26px y alineados con la luna de28px. Texto y tarjetas diarias mantienen su tamaño.
