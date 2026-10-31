@@ -1,6 +1,6 @@
 # APP MAP.SOTILLO
 
-Mapa de Ávila y previsión meteorológica para Sotillo de la Adrada. Versión 0.3.0.
+Mapa de Ávila y previsión meteorológica para Sotillo de la Adrada. Versión 0.3.1.
 
 ## Funciones
 
@@ -44,6 +44,8 @@ checkedAt es la última consulta correcta; lastAttemptAt y status reflejan fallo
 
 ## Historial
 
+- 0.3.1: iconos según día/noche de Open-Meteo y fase lunar por fecha/hora mediante SunCalc 1.9.0 (BSD-2-Clause, licencia incluida). Luna nocturna despejada/parcialmente nubosa, sin soles en chubascos nocturnos. Fase en el resumen nocturno. Las tarjetas diarias resumen el día completo y no representan una hora nocturna. La fase no indica que la Luna esté sobre el horizonte ni despejada de nubes.
+
 - 0.3.0: recogida automática del visor público oficial de Instagram, carteles, deduplicación, conservación y estado de fuente verificable.
 
 - 0.2.3: destacada verificada del curso gratuito de carretillas elevadoras de AEDUCA, publicado por el Ayuntamiento el 22/10/2026. Sin fecha final inventada. Las destacadas siguen siendo una selección manual; la consulta automática solo cubre la web municipal.
@@ -67,6 +69,7 @@ checkedAt es la última consulta correcta; lastAttemptAt y status reflejan fallo
 - 0.1.1: previsión de 15 días antes de las próximas 36 horas; mapas al final.
 
 - 0.1.0: importación del atlas y primera integración meteorológica, humedad, resumen, horas, 15 días, Windy e instalación móvil.
+
 
 
 
