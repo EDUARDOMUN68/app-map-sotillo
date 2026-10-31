@@ -82,3 +82,7 @@ checkedAt es la última consulta correcta; lastAttemptAt y status reflejan fallo
 
 
 
+
+### 0.3.2
+
+Luna blanca con contorno gris y zona en sombra gris azulada, dibujada en SVG según la iluminación calculada. Conserva la fase y se distingue del sol amarillo en todos los dispositivos.
