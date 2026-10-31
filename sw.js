@@ -1,6 +1,6 @@
 'use strict';
-const CACHE='sotillo-shell-0.3.3';
-const ASSETS=['./','./index.html','./weather.css?v=0.3.3','./weather.js?v=0.3.3','./manifest.webmanifest?v=0.1.2','./install.js?v=0.1.5','./refresh.js?v=0.3.3','./news.js?v=0.3.0','./vendor/suncalc.js?v=1.9.0','./sky-icons.js?v=0.3.3','./icon.svg','./icon-192.png','./icon-512.png'];
+const CACHE='sotillo-shell-0.3.4';
+const ASSETS=['./','./index.html','./weather.css?v=0.3.4','./weather.js?v=0.3.4','./manifest.webmanifest?v=0.1.2','./install.js?v=0.1.5','./refresh.js?v=0.3.4','./news.js?v=0.3.0','./vendor/suncalc.js?v=1.9.0','./sky-icons.js?v=0.3.4','./icon.svg','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS.map(asset=>new Request(asset,{cache:'reload'})))).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('sotillo-shell-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',event=>{

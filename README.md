@@ -90,3 +90,7 @@ Luna blanca con contorno gris y zona en sombra gris azulada, dibujada en SVG seg
 ### 0.3.3
 
 Tarjetas diarias centradas, icono meteorológico ampliado y humedad en dos líneas ordenadas con valor y porcentaje inseparables.
+
+### 0.3.4
+
+Luna con cráteres suaves, halo plateado y detalle de relieve; tamaño de28px en previsión por horas. Mantiene fase, superficie blanca y sombra diferenciada.
