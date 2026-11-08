@@ -3,24 +3,11 @@
   "zone": "670503",
   "area": "Sur de Ávila",
   "municipality": "Sotillo de la Adrada",
-  "checkedAt": "2026-11-08T13:54:55.775937+00:00",
-  "lastSuccessAt": "2026-11-08T13:54:55.775937+00:00",
+  "checkedAt": "2026-11-08T18:47:32.991679+00:00",
+  "lastSuccessAt": "2026-11-08T18:47:32.991679+00:00",
   "status": "ok",
   "source": "https://www.aemet.es/documentos_d/eltiempo/prediccion/avisos/rss/CAP_AFAE_wah_RSS.xml",
   "alerts": [
-    {
-      "id": "2.49.0.0.724.0.ES.20261108081031.670503PRP109091794125431",
-      "sent": "2026-11-08T08:10:31-00:00",
-      "level": "amarillo",
-      "headline": "Aviso de lluvias de nivel amarillo. Sur de Ávila",
-      "description": "Precipitación acumulada en una hora: 15 mm.",
-      "instruction": "Esté atento. Manténgase informado de la predicción meteorológica más actualizada. Se pueden producir daños moderados a personas y bienes, especialmente a aquellos vulnerables o en zonas expuestas al fenómeno.",
-      "probability": "40%-70%",
-      "onset": "2026-11-08T21:00:00+01:00",
-      "expires": "2026-11-09T09:59:59+01:00",
-      "zone": "670503",
-      "area": "Sur de Ávila"
-    },
     {
       "id": "2.49.0.0.724.0.ES.20261108103345.670503PRP209091794134025",
       "sent": "2026-11-08T10:33:45-00:00",
@@ -28,6 +15,19 @@
       "headline": "Aviso de lluvias de nivel naranja. Sur de Ávila",
       "description": "Precipitación acumulada en 12 horas: 100 mm. Durante el episodio los acumulados pueden alcanzar entre 200 y 300 mm.",
       "instruction": "Esté preparado. Tome precauciones y manténgase informado de la predicción meteorológica más actualizada. Se pueden producir daños graves a personas y bienes, especialmente a aquellos vulnerables o en zonas expuestas al fenómeno.",
+      "probability": "40%-70%",
+      "onset": "2026-11-08T21:00:00+01:00",
+      "expires": "2026-11-09T09:59:59+01:00",
+      "zone": "670503",
+      "area": "Sur de Ávila"
+    },
+    {
+      "id": "2.49.0.0.724.0.ES.20261108175603.670503PRP109091794160563",
+      "sent": "2026-11-08T17:56:03-00:00",
+      "level": "amarillo",
+      "headline": "Aviso de lluvias de nivel amarillo. Sur de Ávila",
+      "description": "Precipitación acumulada en una hora: 20 mm.",
+      "instruction": "Esté atento. Manténgase informado de la predicción meteorológica más actualizada. Se pueden producir daños moderados a personas y bienes, especialmente a aquellos vulnerables o en zonas expuestas al fenómeno.",
       "probability": "40%-70%",
       "onset": "2026-11-08T21:00:00+01:00",
       "expires": "2026-11-09T09:59:59+01:00",
@@ -48,15 +48,28 @@
       "area": "Sur de Ávila"
     },
     {
-      "id": "2.49.0.0.724.0.ES.20261108104353.670503PRP210231794134633",
-      "sent": "2026-11-08T10:43:53-00:00",
+      "id": "2.49.0.0.724.0.ES.20261108180732.670503PRP210231794161252",
+      "sent": "2026-11-08T18:07:32-00:00",
       "level": "naranja",
       "headline": "Aviso de lluvias de nivel naranja. Sur de Ávila",
-      "description": "Precipitación acumulada en 12 horas: 80 mm. Durante el episodio los acumulados pueden alcanzar entre 200 y 300 mm. El aviso es continuación del día anterior.",
+      "description": "Precipitación acumulada en 12 horas: 100 mm. Durante el episodio los acumulados pueden alcanzar entre 200 y 300 mm. El aviso es continuación del día anterior.",
       "instruction": "Esté preparado. Tome precauciones y manténgase informado de la predicción meteorológica más actualizada. Se pueden producir daños graves a personas y bienes, especialmente a aquellos vulnerables o en zonas expuestas al fenómeno.",
       "probability": "40%-70%",
       "onset": "2026-11-10T00:00:00+01:00",
       "expires": "2026-11-10T23:59:59+01:00",
+      "zone": "670503",
+      "area": "Sur de Ávila"
+    },
+    {
+      "id": "2.49.0.0.724.0.ES.20261108180732.670503PRP110201794161252",
+      "sent": "2026-11-08T18:07:32-00:00",
+      "level": "amarillo",
+      "headline": "Aviso de lluvias de nivel amarillo. Sur de Ávila",
+      "description": "Precipitación acumulada en una hora: 15 mm.",
+      "instruction": "Esté atento. Manténgase informado de la predicción meteorológica más actualizada. Se pueden producir daños moderados a personas y bienes, especialmente a aquellos vulnerables o en zonas expuestas al fenómeno.",
+      "probability": "40%-70%",
+      "onset": "2026-11-10T09:00:00+01:00",
+      "expires": "2026-11-10T20:59:59+01:00",
       "zone": "670503",
       "area": "Sur de Ávila"
     }
