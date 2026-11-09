@@ -3,8 +3,8 @@
   "zone": "670503",
   "area": "Sur de Ávila",
   "municipality": "Sotillo de la Adrada",
-  "checkedAt": "2026-11-08T22:48:43.508812+00:00",
-  "lastSuccessAt": "2026-11-08T22:48:43.508812+00:00",
+  "checkedAt": "2026-11-09T02:36:10.839623+00:00",
+  "lastSuccessAt": "2026-11-09T02:36:10.839623+00:00",
   "status": "ok",
   "source": "https://www.aemet.es/documentos_d/eltiempo/prediccion/avisos/rss/CAP_AFAE_wah_RSS.xml",
   "alerts": [
@@ -70,6 +70,19 @@
       "probability": "40%-70%",
       "onset": "2026-11-10T09:00:00+01:00",
       "expires": "2026-11-10T20:59:59+01:00",
+      "zone": "670503",
+      "area": "Sur de Ávila"
+    },
+    {
+      "id": "2.49.0.0.724.0.ES.20261108225001.670503PRP211231794178201",
+      "sent": "2026-11-08T22:50:01-00:00",
+      "level": "amarillo",
+      "headline": "Aviso de lluvias de nivel amarillo. Sur de Ávila",
+      "description": "Precipitación acumulada en 12 horas: 60 mm. Durante el episodio los acumulados pueden alcanzar entre 200 y 300 mm en el Sur de Ávila y los 200 mm en el Sur y Sistema Central de Salamanca. El aviso continua del día anterior.",
+      "instruction": "Esté atento. Manténgase informado de la predicción meteorológica más actualizada. Se pueden producir daños moderados a personas y bienes, especialmente a aquellos vulnerables o en zonas expuestas al fenómeno.",
+      "probability": "40%-70%",
+      "onset": "2026-11-11T00:00:00+01:00",
+      "expires": "2026-11-11T23:59:59+01:00",
       "zone": "670503",
       "area": "Sur de Ávila"
     }
