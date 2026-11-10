@@ -3,24 +3,11 @@
   "zone": "670503",
   "area": "Sur de Ávila",
   "municipality": "Sotillo de la Adrada",
-  "checkedAt": "2026-11-09T20:57:12.613777+00:00",
-  "lastSuccessAt": "2026-11-09T20:57:12.613777+00:00",
+  "checkedAt": "2026-11-10T03:28:10.675008+00:00",
+  "lastSuccessAt": "2026-11-10T03:28:10.675008+00:00",
   "status": "ok",
   "source": "https://www.aemet.es/documentos_d/eltiempo/prediccion/avisos/rss/CAP_AFAE_wah_RSS.xml",
   "alerts": [
-    {
-      "id": "2.49.0.0.724.0.ES.20261109175611.670503PRP209231794246971",
-      "sent": "2026-11-09T17:56:11-00:00",
-      "level": "amarillo",
-      "headline": "Aviso de lluvias de nivel amarillo. Sur de Ávila",
-      "description": "Precipitación acumulada en 12 horas: 60 mm. El aviso es continuación del día anterior.",
-      "instruction": "Esté atento. Manténgase informado de la predicción meteorológica más actualizada. Se pueden producir daños moderados a personas y bienes, especialmente a aquellos vulnerables o en zonas expuestas al fenómeno.",
-      "probability": "40%-70%",
-      "onset": "2026-11-09T18:00:00+01:00",
-      "expires": "2026-11-09T23:59:59+01:00",
-      "zone": "670503",
-      "area": "Sur de Ávila"
-    },
     {
       "id": "2.49.0.0.724.0.ES.20261109175611.670503PRP110231794246971",
       "sent": "2026-11-09T17:56:11-00:00",
@@ -96,6 +83,19 @@
       "probability": "40%-70%",
       "onset": "2026-11-11T18:00:00+01:00",
       "expires": "2026-11-11T23:59:59+01:00",
+      "zone": "670503",
+      "area": "Sur de Ávila"
+    },
+    {
+      "id": "2.49.0.0.724.0.ES.20261109225001.670503VIRM12021794264601",
+      "sent": "2026-11-09T22:50:01-00:00",
+      "level": "amarillo",
+      "headline": "Aviso de vientos de nivel amarillo. Sur de Ávila",
+      "description": "Rachas máximas: 80 km/h. Viento del suroeste y oeste.",
+      "instruction": "Esté atento. Manténgase informado de la predicción meteorológica más actualizada. Se pueden producir daños moderados a personas y bienes, especialmente a aquellos vulnerables o en zonas expuestas al fenómeno.",
+      "probability": "40%-70%",
+      "onset": "2026-11-12T00:00:00+01:00",
+      "expires": "2026-11-12T02:59:59+01:00",
       "zone": "670503",
       "area": "Sur de Ávila"
     }
